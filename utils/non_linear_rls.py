@@ -3,7 +3,9 @@ import scipy.linalg
 
 #---------------------------------------------------------------------------------------
 def rlsloo_ll1( V, D, Y, lambd):
-
+	"""
+	Computes cs and the actual LOO errors for a single value of lambda. (lambd)
+	"""
         n = V.shape[0]
         cl = Y.shape[1]
         
@@ -28,29 +30,51 @@ def rlsloo_ll1( V, D, Y, lambd):
 
 
 #---------------------------------------------------------------------------------------
-def rlsloo_ll(V, D, Y, lambdas):
+def rlsloo_ll(V, D, Y, lambdas=None):
+	"""
+	Input:
+	V, D = eigenvectors and eigen values from eigen value decomposition
+	lambdas = default used in our computation
+	Output:
+	cs = is a matrix of size representing function weights of lambda
+	loos = total LOO error vector for nonlinear RLS with lambda
+	
+	"""
 
-    n  = V.shape[0]
-    cl = Y.shape[1]
-    l = len(lambdas)
+	n  = V.shape[0]
+	cl = Y.shape[1]
+	l = len(lambdas)
 
-    cs = sp.zeros((l, cl, n))
-    loos = sp.zeros((l,cl))
-    loos[:] = sp.inf
+	cs = sp.zeros((l, cl, n))
+	loos = sp.zeros((l,cl))
+	loos[:] = sp.inf
 
-    for i in range(l):
-#        print D, Y, lambdas[i]
-        csll, looerrsll = rlsloo_ll1(V, D, Y, lambdas[i])
-        cs[i][:][:] = csll
-        loos[i][:] = sp.sqrt( sp.sum( looerrsll**2, axis=0) )
-    
-    return cs, loos
+	for i in range(l):
+		#        print D, Y, lambdas[i]
+		csll, looerrsll = rlsloo_ll1(V, D, Y, lambdas[i])
+		cs[i][:][:] = csll
+		loos[i][:] = sp.sqrt( sp.sum( looerrsll**2, axis=0) )
+		
+	return cs, loos
 
 #---------------------------------------------------------------------------------------
-def rlsloo(K, Y, lambdas):
+def rlsloo(K, Y, lambdas=None):
+	"""
+	Nonlinear regularized least squares.
+	Input:
+	K = is an n by n symmetric kernel matrix.
+	Y = Classes
+	lamdas = default as used by rifkin lambdas = logspace(-6,6,30);
+
+	Output:
+	cs = is a matrix of size representing function weights of lambda
+	loos = total LOO error vector for nonlinear RLS with lambda
+	
+	"""
+
 
     # This is where the problem is:
     # we are getting different signs
-    D, V = scipy.linalg.eig(K)
-    cs, loos = rlsloo_ll(V, D, Y, lambdas)
-    return cs, loos
+	D, V = scipy.linalg.eig(K)
+	cs, loos = rlsloo_ll(V, D, Y, lambdas)
+	return cs, loos
