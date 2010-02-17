@@ -1,6 +1,6 @@
 import scipy as sp
 import scipy.linalg
-
+from scipy.io import savemat
 #---------------------------------------------------------------------------------------
 def rlsloo_ll1( V, D, Y, lambd):
 	"""
@@ -10,21 +10,22 @@ def rlsloo_ll1( V, D, Y, lambd):
         cl = Y.shape[1]
         
         inner  = 1/(D + lambd)
+	inner = inner.conj()
         VtY = sp.dot(V.T, Y)
-
-        # -- till here works fine
+	VtY = VtY.conj()
 
         # Because of signs of D are flipped (scipy.linalg.eig returns
         # flipped signs for complex part of the eigenvalues)
         in_dot = sp.ones((n,1)) * inner
-        
         ViD = V * in_dot
         cs = sp.dot(ViD, VtY)
         dGi = sp.sum(ViD*V, axis = 1)
-
+        # -- till here works fine
         #check matrix dimensions
-        looerrs = cs/dGi
-        cs = cs.transpose()
+        looerrs = cs.ravel()/sp.real(dGi.ravel())
+	looerrs = sp.real(looerrs)
+        cs = sp.real(cs.transpose())
+
         return cs.ravel(), looerrs
 
 
@@ -77,4 +78,6 @@ def rlsloo(K, Y, lambdas=None):
     # we are getting different signs
 	D, V = scipy.linalg.eig(K)
 	cs, loos = rlsloo_ll(V, D, Y, lambdas)
+	D = D.conj() 
+	# for some odd reason we have to take conjugate to make the values as in matlab
 	return cs, loos
