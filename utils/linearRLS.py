@@ -27,10 +27,11 @@ def lrlsloo(X, Y, lambdas=None):
     regularization parameters to try.  DEFAULT: logspace(-6,6,30).
 
     """
-
     U,S,V = sp.linalg.svd(X)
+    print lambdas.shape
     S2 = S**2
     w, loos = lrlsloo_ll(X, U, S2, Y, lambdas)
+
     return w, loos
     
 def lrlsloo_ll(X, U, S2, Y, lambdas=None):
@@ -67,7 +68,7 @@ def lrlsloo_ll1(X, U, S2, Y, lambd):
     """
     n = X.shape[0]
     cl = Y.shape[1]
-    
+
     UtY = sp.dot(U.transpose(), Y)
     
     inner  = (1/(S2 + lambd) - 1/lambd)

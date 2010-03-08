@@ -66,8 +66,7 @@ def compute_rls(data_file,
     else:
         print "ERROR: specify linear or nonlinear"
 
-    print loos
-    print w
+
     if save_out:
         out_data = {'weights': w,
                     'loos': loos}

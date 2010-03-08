@@ -77,7 +77,10 @@ def rlsloo(K, Y, lambdas=None):
     # This is where the problem is:
     # we are getting different signs
 	D, V = scipy.linalg.eig(K)
+
+	print "Eig shape D and V", D.shape, V.shape
 	cs, loos = rlsloo_ll(V, D, Y, lambdas)
 	D = D.conj() 
 	# for some odd reason we have to take conjugate to make the values as in matlab
+	print cs.shape, loos.shape
 	return cs, loos
