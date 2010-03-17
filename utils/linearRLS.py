@@ -28,7 +28,6 @@ def lrlsloo(X, Y, lambdas=None):
 
     """
     U,S,V = sp.linalg.svd(X)
-    print lambdas.shape
     S2 = S**2
     w, loos = lrlsloo_ll(X, U, S2, Y, lambdas)
 
