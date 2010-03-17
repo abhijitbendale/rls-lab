@@ -10,9 +10,9 @@ data=glob.glob(os.path.join('data/*'))
 
 
 setup(
-    name='pyphasesym',
+    name='RLS',
     version='1.0',
-    description='Python implementation of phasesym program',
+    description='Python implementation of RLS program',
     author='Abhijit Bendale',
     author_email='bendale@mit.edu',
     py_modules = ['rls_pipeline','tests.test_rlspackage',
