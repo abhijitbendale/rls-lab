@@ -27,7 +27,17 @@ def lrlsloo(X, Y, lambdas=None):
     regularization parameters to try.  DEFAULT: logspace(-6,6,30).
 
     """
-    U,S,V = sp.linalg.svd(X)
+#    U,S,V = sp.linalg.svd(X)
+
+    # Ha Hong: if X has less samples than its dimensionality, don't do full SVD.
+    if X.shape[0] < X.shape[1]:
+        U,S0,V = sp.linalg.svd(X, full_matrices = False)
+    else:
+        U,S0,V = sp.linalg.svd(X)
+    # Ha Hong: if X is not square, S needs to be in a matrix form (not vector!).
+    S = sp.zeros(X.shape[0])
+    S[:len(S0)] = S0
+
     S2 = S**2
     w, loos = lrlsloo_ll(X, U, S2, Y, lambdas)
 
@@ -65,13 +75,19 @@ def lrlsloo_ll1(X, U, S2, Y, lambd):
     """
     Computes ws and the actual LOO errors for a single value of lambda.
     """
+
     n = X.shape[0]
     cl = Y.shape[1]
-
+    
     UtY = sp.dot(U.transpose(), Y)
     
-    inner  = (1/(S2 + lambd) - 1/lambd)
-    Uinner = U *( np.ones((n,1)) * inner)
+    inner0  = (1/(S2 + lambd) - 1/lambd)
+    # Ha Hong: this might be better..
+    inner = sp.zeros((n,n))
+    for i, elem in enumerate(inner0):
+        inner[i,i] = elem
+    # Original: Uinner = U *( np.ones((n,1)) * inner)
+    Uinner = sp.dot(U, inner)
     
     c = Y/lambd + sp.dot(Uinner,UtY)
     dGi = 1/lambd + sp.sum(Uinner*U, axis = 1)
