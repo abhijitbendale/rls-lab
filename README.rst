@@ -30,3 +30,6 @@ cd tests/
 nosetests test_rlspackage.py
 
 
+More updates to come soon
+-------------------------
+We are working on number of updates. Please stay tuned
